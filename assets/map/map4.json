@@ -88,6 +88,16 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"mapImage",
+                         "type":"string",
+                         "value":"mainMapa"
+                        }, 
+                        {
+                         "name":"targetMap",
+                         "type":"string",
+                         "value":"mainMap"
+                        }, 
+                        {
                          "name":"targetX",
                          "type":"float",
                          "value":800
