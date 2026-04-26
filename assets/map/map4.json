@@ -133,6 +133,85 @@
         }, 
         {
          "draworder":"topdown",
+         "id":6,
+         "name":"NPCs",
+         "objects":[
+                {
+                 "height":66,
+                 "id":17,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"rarity_merge"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":74,
+                 "x":436,
+                 "y":80
+                }, 
+                {
+                 "height":80,
+                 "id":18,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"stone_enhance"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":82,
+                 "x":568,
+                 "y":76
+                }, 
+                {
+                 "height":78,
+                 "id":19,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"socket_create"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":78,
+                 "x":450,
+                 "y":244
+                }, 
+                {
+                 "height":78,
+                 "id":20,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"insignia"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":78,
+                 "x":715,
+                 "y":73
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":2,
          "name":"Collision",
          "objects":[
@@ -264,8 +343,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":17,
+ "nextlayerid":7,
+ "nextobjectid":21,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
