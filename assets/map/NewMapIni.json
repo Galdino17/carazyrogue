@@ -225,7 +225,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -584,7 +584,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -638,10 +638,33 @@
                  "width":214,
                  "x":45,
                  "y":2816
+                }, 
+                {
+                 "height":216,
+                 "id":74,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"mapImage",
+                         "type":"string",
+                         "value":"Tutorial"
+                        }, 
+                        {
+                         "name":"targetMap",
+                         "type":"string",
+                         "value":"tutorial"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":214,
+                 "x":3101,
+                 "y":900
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1252,10 +1275,58 @@
                  "width":17.3333333333335,
                  "x":4018.66666666667,
                  "y":977.333333333333
+                }, 
+                {
+                 "height":128,
+                 "id":67,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4256,
+                 "x":-80,
+                 "y":-112
+                }, 
+                {
+                 "height":3224,
+                 "id":68,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":232,
+                 "x":4088,
+                 "y":-56
+                }, 
+                {
+                 "height":216,
+                 "id":69,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4288,
+                 "x":-56,
+                 "y":3056
+                }, 
+                {
+                 "height":3368,
+                 "id":70,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":200,
+                 "x":-208,
+                 "y":-160
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1319,6 +1390,34 @@
                  "width":92,
                  "x":2801.33333333333,
                  "y":434.666666666667
+                }, 
+                {
+                 "height":78,
+                 "id":76,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"rarity_merge"
+                        }, 
+                        {
+                         "name":"name_label",
+                         "type":"string",
+                         "value":"Joia"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"craft"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":78,
+                 "x":2449,
+                 "y":369
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1327,7 +1426,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":67,
+ "nextobjectid":77,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
