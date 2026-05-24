@@ -643,6 +643,24 @@
                  "width":80,
                  "x":504,
                  "y":30
+                }, 
+                {
+                 "height":22,
+                 "id":23,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"targetMap",
+                         "type":"string",
+                         "value":"NewMapIni"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":80,
+                 "x":192,
+                 "y":2993
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -651,7 +669,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":23,
+ "nextobjectid":24,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",

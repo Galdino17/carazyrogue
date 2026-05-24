@@ -211,27 +211,63 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":214,
-                 "x":1232.0303030303,
+                 "width":2270,
+                 "x":-135.9696969697,
                  "y":1109.69696969697
                 }, 
                 {
-                 "height":60,
-                 "id":79,
+                 "height":1292,
+                 "id":94,
                  "name":"",
                  "opacity":1,
                  "properties":[
                         {
                          "name":"targetMap",
                          "type":"string",
-                         "value":"arena"
+                         "value":"room1"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":214,
-                 "x":1135.18181818182,
-                 "y":-91.3333333333333
+                 "width":102,
+                 "x":2065,
+                 "y":-110
+                }, 
+                {
+                 "height":60,
+                 "id":95,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"targetMap",
+                         "type":"string",
+                         "value":"room1"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2350,
+                 "x":-139,
+                 "y":-142
+                }, 
+                {
+                 "height":1468,
+                 "id":96,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"targetMap",
+                         "type":"string",
+                         "value":"room1"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":78,
+                 "x":-95,
+                 "y":-206
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -578,16 +614,16 @@
                  "y":977.333333333333
                 }, 
                 {
-                 "height":128,
+                 "height":72,
                  "id":67,
                  "name":"",
                  "opacity":1,
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":4256,
+                 "width":4416,
                  "x":-2160,
-                 "y":-112
+                 "y":-56
                 }, 
                 {
                  "ellipse":true,
@@ -706,8 +742,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":264,
-                 "x":-264,
+                 "width":32,
+                 "x":-32,
                  "y":-152
                 }],
          "opacity":1,
@@ -870,7 +906,7 @@
                         {
                          "name":"name",
                          "type":"string",
-                         "value":"teleporter"
+                         "value":"dungeon"
                         }, 
                         {
                          "name":"name_label",
@@ -886,8 +922,36 @@
                  "type":"",
                  "visible":true,
                  "width":92,
-                 "x":1281.27272727273,
-                 "y":881.575774242424
+                 "x":1421.27272727273,
+                 "y":877.575774242424
+                }, 
+                {
+                 "height":85.3333,
+                 "id":97,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"arena"
+                        }, 
+                        {
+                         "name":"name_label",
+                         "type":"string",
+                         "value":"Eliseu"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"teleporter"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":92,
+                 "x":1152,
+                 "y":875.33335
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -896,7 +960,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":94,
+ "nextobjectid":98,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
