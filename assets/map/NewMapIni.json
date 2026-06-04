@@ -74,7 +74,7 @@
          "name":"mainLayer",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":125,
          "x":0,
          "y":0
@@ -268,6 +268,24 @@
                  "width":78,
                  "x":-95,
                  "y":-206
+                }, 
+                {
+                 "height":54,
+                 "id":100,
+                 "name":"desert",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"targetMap",
+                         "type":"string",
+                         "value":"desert"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":102,
+                 "x":96,
+                 "y":504
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -960,7 +978,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":100,
+ "nextobjectid":101,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
