@@ -7,6 +7,9 @@ const port = Number(process.env.PORT || 5173);
 const host = "127.0.0.1";
 const projectDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.dirname(projectDir);
+const localFirstMap = "tutorial";
+const localHubMap = "NewMapIni";
+const legacyHubMaps = new Set(["room1", "mainMap", "fightMap"]);
 
 const contentTypes = {
     ".html": "text/html; charset=utf-8",
@@ -32,7 +35,7 @@ const defaultSave = {
         gold: 1000,
         statsPoints: 10,
         expTotal: 0,
-        map: "NewMapIni",
+        map: localFirstMap,
     },
     inventory: {
         slots: Array(36).fill(null),
@@ -65,9 +68,11 @@ const defaultSave = {
 let localSave = structuredClone(defaultSave);
 
 function normalizeLocalMap(map) {
-    return map === "room1" || map === "mainMap" || map === "fightMap" || !map
-        ? defaultSave.player.map
-        : map;
+    if (!map) {
+        return localFirstMap;
+    }
+
+    return legacyHubMaps.has(map) ? localHubMap : map;
 }
 
 function sendJson(res, data, status = 200) {
@@ -205,9 +210,9 @@ const server = createServer(async (req, res) => {
         }
 
         if (
-            filePath.endsWith(path.join("assets", "map", "room1.json")) ||
-            filePath.endsWith(path.join("assets", "map", "mainMap.json")) ||
-            filePath.endsWith(path.join("assets", "map", "fightMap.json"))
+            [...legacyHubMaps].some((map) =>
+                filePath.endsWith(path.join("assets", "map", `${map}.json`)),
+            )
         ) {
             filePath = path.join(projectDir, "assets", "map", "NewMapIni.json");
         }
