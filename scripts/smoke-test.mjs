@@ -372,6 +372,60 @@ async function testSocketConnect(sid) {
 }
 
 /**
+ * Test 7 — Socket needle presente no bundle
+ * O serve-local.mjs reescreve a conexão Socket.IO substituindo uma string
+ * literal exata no bundle. Se o bundle mudar e essa string desaparecer,
+ * o mock de Socket.IO silenciosamente para de funcionar.
+ *
+ * Este teste valida que a needle ainda existe ANTES de rodar o servidor.
+ */
+async function testSocketNeedle() {
+  const { readdir } = await import("node:fs/promises");
+  const assetsDir = path.join(rootDir, "assets");
+
+  let bundlePath;
+  try {
+    const files = await readdir(assetsDir);
+    const bundleName = files.find((f) => /^index-[A-Za-z0-9_-]+\.js$/.test(f));
+    if (!bundleName) {
+      fail("Socket needle no bundle", "Nenhum arquivo index-*.js encontrado em assets/");
+      return;
+    }
+    bundlePath = path.join(assetsDir, bundleName);
+  } catch {
+    fail("Socket needle no bundle", "Não foi possível listar assets/");
+    return;
+  }
+
+  // Must mirror the bundleSocketNeedle constant in serve-local.mjs exactly.
+  // If this test fails after a new build, update bundleSocketNeedle in serve-local.mjs.
+  const SOCKET_NEEDLE = "this.socket=re(m,{auth:{playerId:this.playerId}})";
+
+  let source;
+  try {
+    source = await readFile(bundlePath, "utf8");
+  } catch (err) {
+    fail("Socket needle no bundle", `Não foi possível ler o bundle: ${err}`);
+    return;
+  }
+
+  if (!source.includes(SOCKET_NEEDLE)) {
+    fail(
+      "Socket needle no bundle",
+      [
+        "A needle exata não foi encontrada no bundle.",
+        "Isso significa que uma nova build mudou o código de conexão Socket.IO.",
+        "Atualize `bundleSocketNeedle` em serve-local.mjs para manter o mock funcionando.",
+        `Needle esperada: ${SOCKET_NEEDLE}`,
+      ].join(" "),
+    );
+    return;
+  }
+
+  pass("Socket needle presente no bundle — reescrita serve-local.mjs operacional");
+}
+
+/**
  * Test 6 — Bundle JS serve corretamente
  * O arquivo assets/index-*.js deve ser servido com Content-Type correto.
  */
@@ -429,6 +483,7 @@ async function main() {
   console.log(`Base path: ${base}`);
   console.log("");
 
+  await testSocketNeedle();
   await testIndexHtml();
   await testApiPlayer();
   await testInitialMap();
