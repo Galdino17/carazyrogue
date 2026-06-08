@@ -13,14 +13,18 @@
 
         <style>
             html,
-            body {
+            body,
+            #app {
+                width: 100%;
+                height: 100%;
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
-                height: 100%;
-                background: black;
+                background: #000;
             }
+
             canvas {
+                display: block;
                 position: relative;
                 z-index: 20;
             }
@@ -31,11 +35,52 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-
                 z-index: 10;
             }
         </style>
-      <script type="module" crossorigin src="/carazyrogue/assets/index-DDI3sdiz.js"></script>
+        <!--
+            INTERCEPTOR DE FETCH — AMBIENTE LOCAL
+            ======================================
+            Este script intercepta chamadas fetch() que apontam para a API de
+            produção (https://crazyrogue.duckdns.org) e as redireciona para
+            window.location.origin (o servidor local serve-local.mjs).
+
+            Em desenvolvimento, serve-local.mjs substitui dinamicamente a
+            constante `apiOrigin` abaixo via rewriteIndexForLocal(), portanto
+            o valor aqui representa o fallback do arquivo físico.
+
+            Não edite o valor de `apiOrigin` diretamente — configure a variável
+            de ambiente CARAZYROGUE_API_ORIGIN no .env.local e o servidor local
+            realizará a substituição automaticamente em tempo de resposta.
+        -->
+        <script>
+            (() => {
+                const apiOrigin = "https://crazyrogue.duckdns.org";
+                const originalFetch = window.fetch.bind(window);
+
+                window.fetch = (input, init) => {
+                    const url =
+                        typeof input === "string"
+                            ? input
+                            : input instanceof URL
+                              ? input.href
+                              : input?.url;
+
+                    if (url?.startsWith(apiOrigin)) {
+                        const localUrl = `${window.location.origin}${url.slice(apiOrigin.length)}`;
+
+                        if (typeof input === "string" || input instanceof URL) {
+                            return originalFetch(localUrl, init);
+                        }
+
+                        return originalFetch(new Request(localUrl, input), init);
+                    }
+
+                    return originalFetch(input, init);
+                };
+            })();
+        </script>
+        <script type="module" crossorigin src="/carazyrogue/assets/index-DDI3sdiz.js"></script>
     </head>
     <body>
         <div id="app"></div>

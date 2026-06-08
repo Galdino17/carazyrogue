@@ -790,6 +790,16 @@
                          "name":"name",
                          "type":"string",
                          "value":"rarity_merge"
+                        }, 
+                        {
+                         "name":"name_label",
+                         "type":"string",
+                         "value":"Joia (Rarity)"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"craft"
                         }],
                  "rotation":338.79718135619,
                  "type":"",
@@ -808,6 +818,16 @@
                          "name":"name",
                          "type":"string",
                          "value":"socket_create"
+                        }, 
+                        {
+                         "name":"name_label",
+                         "type":"string",
+                         "value":"Abigail (socket)"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"craft"
                         }],
                  "rotation":332.267880027664,
                  "type":"",
