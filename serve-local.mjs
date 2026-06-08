@@ -7,9 +7,13 @@ const port = Number(process.env.PORT || 5173);
 const host = "127.0.0.1";
 const projectDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.dirname(projectDir);
-const localFirstMap = "tutorial";
 const localHubMap = "NewMapIni";
-const legacyHubMaps = new Set(["room1", "mainMap", "fightMap"]);
+const localFirstMap = localHubMap;
+const unsafeLocalMaps = new Set(["tutorial", "mainMap", "fightMap", "map", "map3", "mapCity", "map4", "mapIni"]);
+const unsafeLocalMapFiles = new Set(["tutorial", "mainMap", "map3", "map4", "mapIni"]);
+const bundleSocketNeedle = 'this.socket=re(m,{auth:{playerId:this.playerId}})';
+const bundleSocketReplacement =
+    'this.socket=re(m,{transports:["polling"],upgrade:!1,auth:{playerId:this.playerId}})';
 
 const contentTypes = {
     ".html": "text/html; charset=utf-8",
@@ -330,7 +334,7 @@ function normalizeLocalMap(map) {
         return localFirstMap;
     }
 
-    return legacyHubMaps.has(map) ? localHubMap : map;
+    return unsafeLocalMaps.has(map) ? localHubMap : map;
 }
 
 function sendJson(res, data, status = 200) {
@@ -342,12 +346,27 @@ function sendJson(res, data, status = 200) {
     return true;
 }
 
-async function readJsonBody(req) {
+function sendText(res, body, status = 200, contentType = "text/plain; charset=utf-8") {
+    res.writeHead(status, {
+        "Content-Type": contentType,
+        "Cache-Control": "no-store",
+    });
+    res.end(body);
+    return true;
+}
+
+async function collectBody(req) {
     const chunks = [];
 
     for await (const chunk of req) {
         chunks.push(chunk);
     }
+
+    return chunks;
+}
+
+async function readJsonBody(req) {
+    const chunks = await collectBody(req);
 
     if (chunks.length === 0) {
         return {};
@@ -358,6 +377,158 @@ async function readJsonBody(req) {
     } catch {
         return {};
     }
+}
+
+const socketSessions = new Map();
+let socketSessionCounter = 0;
+
+function makeSocketSession() {
+    const session = {
+        sid: `local-socket-${++socketSessionCounter}`,
+        queue: [],
+        playerId: localSave?.player?.id || "local-player",
+    };
+
+    socketSessions.set(session.sid, session);
+    return session;
+}
+
+function queueSocketEvent(session, eventName, payload) {
+    session.queue.push(`42${JSON.stringify([eventName, payload])}`);
+}
+
+function queueSocketConnect(session) {
+    session.queue.push(`40${JSON.stringify({ sid: session.sid })}`);
+    queueSocketEvent(session, "player:profile", {
+        playerId: session.playerId,
+        playerName: localSave?.player?.name || "Local Player",
+    });
+    queueSocketEvent(session, "hall:hydrate", {
+        success: true,
+        rooms: [],
+    });
+}
+
+function parseSocketIoEvent(packet) {
+    if (!packet.startsWith("42")) {
+        return null;
+    }
+
+    try {
+        const [eventName, payload] = JSON.parse(packet.slice(2));
+        return { eventName, payload };
+    } catch {
+        return null;
+    }
+}
+
+function handleSocketEvent(session, eventName, payload = {}) {
+    if (eventName === "load_inbox") {
+        queueSocketEvent(session, "inbox", {
+            success: true,
+            payload: [],
+        });
+        return;
+    }
+
+    if (eventName === "open_private_chat" || eventName === "load_private_history") {
+        queueSocketEvent(session, "chat_history", {
+            success: true,
+            payload: [],
+        });
+        return;
+    }
+
+    if (eventName === "chat_global" || eventName === "chat_private") {
+        const message = String(payload.message || "").slice(0, 500);
+
+        queueSocketEvent(session, "chat_message", {
+            success: true,
+            payload: {
+                id: `local-chat-${Date.now()}`,
+                senderId: session.playerId,
+                senderName: localSave?.player?.name || "Local Player",
+                receiverName: payload.receiverName || payload.targetPlayerName || null,
+                message,
+                createdAt: new Date().toISOString(),
+                localMock: true,
+            },
+        });
+    }
+}
+
+async function handleSocketIo(req, res, requestUrl) {
+    if (requestUrl.pathname !== "/socket.io/") {
+        return false;
+    }
+
+    const transport = requestUrl.searchParams.get("transport");
+
+    if (transport !== "polling") {
+        return sendText(res, "unsupported transport", 400);
+    }
+
+    if (req.method === "GET") {
+        const sid = requestUrl.searchParams.get("sid");
+
+        if (!sid) {
+            const session = makeSocketSession();
+            const openPacket = {
+                sid: session.sid,
+                upgrades: [],
+                pingInterval: 60000,
+                pingTimeout: 20000,
+                maxPayload: 1000000,
+            };
+
+            return sendText(res, `0${JSON.stringify(openPacket)}`);
+        }
+
+        const session = socketSessions.get(sid);
+
+        if (!session) {
+            return sendText(res, "unknown sid", 400);
+        }
+
+        const packets = session.queue.splice(0);
+        return sendText(res, packets.length > 0 ? packets.join("\x1e") : "6");
+    }
+
+    if (req.method === "POST") {
+        const sid = requestUrl.searchParams.get("sid");
+        const session = sid ? socketSessions.get(sid) : null;
+
+        if (!session) {
+            return sendText(res, "unknown sid", 400);
+        }
+
+        const body = Buffer.concat(await collectBody(req)).toString("utf8");
+        const packets = body.split("\x1e").filter(Boolean);
+
+        for (const packet of packets) {
+            if (packet.startsWith("40")) {
+                try {
+                    const data = packet.length > 2 ? JSON.parse(packet.slice(2)) : {};
+                    session.playerId = data?.auth?.playerId || session.playerId;
+                } catch {
+                    // Keep the anonymous local player id when auth parsing fails.
+                }
+
+                queueSocketConnect(session);
+                continue;
+            }
+
+            const event = parseSocketIoEvent(packet);
+
+            if (event) {
+                handleSocketEvent(session, event.eventName, event.payload);
+            }
+        }
+
+        return sendText(res, "ok");
+    }
+
+    return sendText(res, "method not allowed", 405);
 }
 
 async function handleApi(req, res, pathname) {
@@ -708,9 +879,31 @@ function resolveRequestPath(url) {
     return filePath;
 }
 
+function isUnsafeLocalMapFile(filePath) {
+    return [...unsafeLocalMapFiles].some((map) =>
+        filePath.endsWith(path.join("assets", "map", `${map}.json`)),
+    );
+}
+
+function rewriteBundleForLocal(body) {
+    let source = body;
+
+    source = source.replaceAll(
+        'const Yr="https://crazyrogue.duckdns.org";',
+        'const Yr=window.location.origin;',
+    );
+    source = source.replaceAll(bundleSocketNeedle, bundleSocketReplacement);
+
+    return source;
+}
+
 const server = createServer(async (req, res) => {
     try {
         const requestUrl = new URL(req.url || "/", `http://${host}:${port}`);
+
+        if (await handleSocketIo(req, res, requestUrl)) {
+            return;
+        }
 
         if (await handleApi(req, res, requestUrl.pathname)) {
             return;
@@ -724,11 +917,7 @@ const server = createServer(async (req, res) => {
             return;
         }
 
-        if (
-            [...legacyHubMaps].some((map) =>
-                filePath.endsWith(path.join("assets", "map", `${map}.json`)),
-            )
-        ) {
+        if (isUnsafeLocalMapFile(filePath)) {
             filePath = path.join(projectDir, "assets", "map", "NewMapIni.json");
         }
 
@@ -738,8 +927,11 @@ const server = createServer(async (req, res) => {
             filePath = path.join(filePath, "index.html");
         }
 
-        const body = await readFile(filePath);
         const ext = path.extname(filePath).toLowerCase();
+        const isBundle = ext === ".js" && path.basename(filePath).startsWith("index-");
+        const body = isBundle
+            ? rewriteBundleForLocal(await readFile(filePath, "utf8"))
+            : await readFile(filePath);
 
         res.writeHead(200, {
             "Content-Type": contentTypes[ext] || "application/octet-stream",
