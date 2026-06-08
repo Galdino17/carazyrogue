@@ -1,19 +1,75 @@
 import { createServer } from "node:http";
+import { existsSync, readFileSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const port = Number(process.env.PORT || 5173);
-const host = "127.0.0.1";
 const projectDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.dirname(projectDir);
-const localHubMap = "NewMapIni";
-const localFirstMap = localHubMap;
+
+loadEnvFile(".env");
+loadEnvFile(".env.local");
+
+const port = Number(process.env.PORT || 5173);
+const host = process.env.HOST || "127.0.0.1";
+const publicBasePath = normalizeBasePath(process.env.CARAZYROGUE_PUBLIC_BASE || "/carazyrogue/");
+const productionApiOrigin = "https://crazyrogue.duckdns.org";
+const apiOrigin = process.env.CARAZYROGUE_API_ORIGIN || productionApiOrigin;
+const socketOrigin = process.env.CARAZYROGUE_SOCKET_ORIGIN || apiOrigin;
+const useLocalSocketMock = process.env.CARAZYROGUE_LOCAL_SOCKET_MOCK !== "0";
+const localHubMap = process.env.CARAZYROGUE_LOCAL_HUB_MAP || "NewMapIni";
+const localFirstMap = process.env.CARAZYROGUE_LOCAL_FIRST_MAP || localHubMap;
 const unsafeLocalMaps = new Set(["tutorial", "mainMap", "fightMap", "map", "map3", "mapCity", "map4", "mapIni"]);
 const unsafeLocalMapFiles = new Set(["tutorial", "mainMap", "map3", "map4", "mapIni"]);
 const bundleSocketNeedle = 'this.socket=re(m,{auth:{playerId:this.playerId}})';
 const bundleSocketReplacement =
     'this.socket=re(m,{transports:["polling"],upgrade:!1,auth:{playerId:this.playerId}})';
+
+function loadEnvFile(fileName) {
+    const filePath = path.join(projectDir, fileName);
+
+    if (!existsSync(filePath)) {
+        return;
+    }
+
+    const lines = readFileSync(filePath, "utf8").split(/\r?\n/);
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+
+        if (!trimmed || trimmed.startsWith("#")) {
+            continue;
+        }
+
+        const separatorIndex = trimmed.indexOf("=");
+
+        if (separatorIndex === -1) {
+            continue;
+        }
+
+        const key = trimmed.slice(0, separatorIndex).trim();
+        let value = trimmed.slice(separatorIndex + 1).trim();
+
+        if (!key || process.env[key] != null) {
+            continue;
+        }
+
+        if (
+            (value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))
+        ) {
+            value = value.slice(1, -1);
+        }
+
+        process.env[key] = value;
+    }
+}
+
+function normalizeBasePath(basePath) {
+    const trimmed = String(basePath || "/carazyrogue/").trim();
+    const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+    return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
+}
 
 const contentTypes = {
     ".html": "text/html; charset=utf-8",
@@ -869,7 +925,7 @@ async function handleApi(req, res, pathname) {
 function resolveRequestPath(url) {
     const requestUrl = new URL(url, `http://${host}:${port}`);
     const pathname = decodeURIComponent(requestUrl.pathname);
-    const normalizedPathname = pathname === "/" ? "/carazyrogue/" : pathname;
+    const normalizedPathname = pathname === "/" ? publicBasePath : pathname;
     const filePath = path.normalize(path.join(rootDir, normalizedPathname));
 
     if (!filePath.startsWith(rootDir)) {
@@ -888,13 +944,21 @@ function isUnsafeLocalMapFile(filePath) {
 function rewriteBundleForLocal(body) {
     let source = body;
 
-    source = source.replaceAll(
-        'const Yr="https://crazyrogue.duckdns.org";',
-        'const Yr=window.location.origin;',
-    );
-    source = source.replaceAll(bundleSocketNeedle, bundleSocketReplacement);
+    source = source.replaceAll(productionApiOrigin, apiOrigin);
+    source = source.replaceAll(`const Yr="${apiOrigin}";`, `const Yr="${socketOrigin}";`);
+
+    if (useLocalSocketMock) {
+        source = source.replaceAll(`const Yr="${socketOrigin}";`, "const Yr=window.location.origin;");
+        source = source.replaceAll(bundleSocketNeedle, bundleSocketReplacement);
+    }
 
     return source;
+}
+
+function rewriteIndexForLocal(body) {
+    return body
+        .replaceAll(`const apiOrigin = "${productionApiOrigin}";`, `const apiOrigin = "${apiOrigin}";`)
+        .replaceAll("/carazyrogue/", publicBasePath);
 }
 
 const server = createServer(async (req, res) => {
@@ -929,8 +993,11 @@ const server = createServer(async (req, res) => {
 
         const ext = path.extname(filePath).toLowerCase();
         const isBundle = ext === ".js" && path.basename(filePath).startsWith("index-");
+        const isIndex = ext === ".html" && path.basename(filePath) === "index.html";
         const body = isBundle
             ? rewriteBundleForLocal(await readFile(filePath, "utf8"))
+            : isIndex
+              ? rewriteIndexForLocal(await readFile(filePath, "utf8"))
             : await readFile(filePath);
 
         res.writeHead(200, {
@@ -945,5 +1012,5 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, host, () => {
-    console.log(`Open http://localhost:${port}/carazyrogue/`);
+    console.log(`Open http://${host}:${port}${publicBasePath}`);
 });
