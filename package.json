@@ -1,0 +1,19 @@
+{
+  "name": "carazyrogue-published-build-recovery",
+  "version": "0.0.0-local",
+  "private": true,
+  "type": "module",
+  "description": "Local recovery scaffold for the CarazyRogue published build while the original source is unavailable.",
+  "scripts": {
+    "dev": "node serve-local.mjs",
+    "dev:local": "node serve-local.mjs",
+    "preview": "node serve-local.mjs",
+    "check": "node --check serve-local.mjs && node scripts/validate-assets.mjs && node scripts/dev-doctor.mjs",
+    "doctor": "node scripts/dev-doctor.mjs",
+    "validate:assets": "node scripts/validate-assets.mjs",
+    "build": "node scripts/build-placeholder.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
