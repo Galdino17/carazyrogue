@@ -955,6 +955,21 @@ function rewriteBundleForLocal(body) {
     return source;
 }
 
+/**
+ * Rewrites the index.html served to the browser for local development.
+ *
+ * Two substitutions are made at response time (never touching the file on disk):
+ *
+ *  1. `apiOrigin` constant — swaps the production origin hardcoded in the
+ *     inline fetch interceptor for the value of CARAZYROGUE_API_ORIGIN (which
+ *     defaults to the production URL, making this a no-op unless overridden).
+ *
+ *  2. Base path — replaces every literal "/carazyrogue/" with the value of
+ *     CARAZYROGUE_PUBLIC_BASE, so the app works under a custom sub-path.
+ *
+ * If you change the inline `apiOrigin` constant in index.html, update the
+ * `productionApiOrigin` constant at the top of this file to match.
+ */
 function rewriteIndexForLocal(body) {
     return body
         .replaceAll(`const apiOrigin = "${productionApiOrigin}";`, `const apiOrigin = "${apiOrigin}";`)

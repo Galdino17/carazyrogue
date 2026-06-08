@@ -65,3 +65,44 @@ Para corrigir de forma definitiva, ainda e necessario recuperar:
 - pipeline de validacao de mapas antes do build
 
 Qualquer alteracao direta no bundle continua sendo trabalho descartavel na proxima build real. Nesta fase, o bundle fisico nao foi editado; a reescrita acontece apenas enquanto o servidor local entrega o arquivo.
+
+## Assets com situacao conhecida
+
+Os arquivos abaixo foram analisados e tem status documentado:
+
+### Orfaos provaveis (nao referenciados pelo bundle)
+
+| Arquivo | Situacao |
+|---|---|
+| `assets/map/map2.json` | Tileset standalone (type:"tileset"), nao e um mapa Phaser. Pode ser orfao. |
+| `assets/map/map2.tsx` | Tileset XML externo. Referencia `map2.jpg` que NAO existe em disco — link quebrado. |
+| `assets/map/desert.tmj` | Formato .tmj (Tiled JSON). Pode ser variante do `desert.json`. Verificar duplicata. |
+| `vite.svg` | Favicon do scaffold Vite. Referenciado no index.html como favicon — manter. |
+
+### Duplicatas suspeitas
+
+| Arquivos | Situacao |
+|---|---|
+| `assets/images/fundoPersonagem.jpg` (37KB) e `fundoPersonagem.png` (1.1MB) | Mesma imagem em dois formatos. O bundle so usa um deles. O .png e 30x maior; remover quando o source confirmar qual e o correto. |
+
+### Assets verificados como necessarios
+
+Todos os outros arquivos em `assets/images/`, `assets/audio/`, `assets/fonts/` e `assets/ui/` sao referenciados diretamente pelo bundle ou pelos mapas seguros.
+
+Use `node scripts/validate-assets.mjs` para gerar a lista atualizada de orfaos.
+
+## Scripts de qualidade (Fase 3)
+
+Alem do servidor local, os seguintes scripts foram adicionados:
+
+| Comando | O que faz |
+|---|---|
+| `node scripts/validate-assets.mjs` | Valida tilesets de todos os mapas e detecta assets orfaos |
+| `node scripts/smoke-test.mjs` | Testa index, API mock, mapa inicial, redirect e Socket.IO |
+| `node scripts/check-env.mjs` | Valida variaveis de ambiente contra o bundle |
+| `node scripts/lint-check.mjs` | Checker de qualidade de codigo (sem deps npm) |
+
+### Configs de estilo (referencia)
+
+- `.eslintrc.json` — regras ESLint para quando ESLint for instalado pos-recuperacao do source
+- `.prettierrc.json` — preferencias de formatacao do projeto

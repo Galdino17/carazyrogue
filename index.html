@@ -38,6 +38,21 @@
                 z-index: 10;
             }
         </style>
+        <!--
+            INTERCEPTOR DE FETCH — AMBIENTE LOCAL
+            ======================================
+            Este script intercepta chamadas fetch() que apontam para a API de
+            produção (https://crazyrogue.duckdns.org) e as redireciona para
+            window.location.origin (o servidor local serve-local.mjs).
+
+            Em desenvolvimento, serve-local.mjs substitui dinamicamente a
+            constante `apiOrigin` abaixo via rewriteIndexForLocal(), portanto
+            o valor aqui representa o fallback do arquivo físico.
+
+            Não edite o valor de `apiOrigin` diretamente — configure a variável
+            de ambiente CARAZYROGUE_API_ORIGIN no .env.local e o servidor local
+            realizará a substituição automaticamente em tempo de resposta.
+        -->
         <script>
             (() => {
                 const apiOrigin = "https://crazyrogue.duckdns.org";
