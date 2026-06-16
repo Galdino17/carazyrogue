@@ -18398,78 +18398,62 @@
         {
           "height": 436.363636363636,
           "id": 3,
-          "name": "spider",
+          "name": "area1",
           "opacity": 1,
-          "properties": [
-            {
-              "name": "qty",
-              "type": "string",
-              "value": "5"
-            }
-          ],
           "rotation": 0,
           "type": "",
           "visible": true,
           "width": 363.636363636364,
-          "x": 215.151515151515,
-          "y": 124.66666666667
+          "x": 235.151515151515,
+          "y": 1712.66666666667
         },
         {
           "height": 406.969696969697,
           "id": 4,
-          "name": "lizard",
+          "name": "area2",
           "opacity": 1,
-          "properties": [
-            {
-              "name": "qty",
-              "type": "string",
-              "value": "8"
-            }
-          ],
           "rotation": 0,
           "type": "",
           "visible": true,
           "width": 372.727272727273,
-          "x": 206,
-          "y": 1742.06060606061
+          "x": 198,
+          "y": 1214.06060606061
         },
         {
           "height": 355.515151515152,
           "id": 5,
-          "name": "lizard",
+          "name": "area3",
           "opacity": 1,
-          "properties": [
-            {
-              "name": "qty",
-              "type": "string",
-              "value": "8"
-            }
-          ],
           "rotation": 0,
           "type": "",
           "visible": true,
           "width": 357.575757575758,
-          "x": 199.151515151515,
-          "y": 1223.63636363636
+          "x": 215.151515151515,
+          "y": 747.636363636364
         },
         {
-          "height": 355.515,
-          "id": 37,
-          "name": "bat",
+          "height": 220,
+          "id": 22,
+          "name": "boss",
           "opacity": 1,
-          "properties": [
-            {
-              "name": "qty",
-              "type": "string",
-              "value": "8"
-            }
-          ],
           "rotation": 0,
           "type": "",
           "visible": true,
-          "width": 357.576,
-          "x": 205.212,
-          "y": 734.2425
+          "width": 162,
+          "x": 286,
+          "y": 202
+        },
+        {
+          "height": 74,
+          "id": 34,
+          "name": "bossExtra",
+          "opacity": 1,
+          "rotation": 0,
+          "type": "",
+          "visible": true,
+          "width": 74,
+          "x": 218,
+          "y": 2914
         }
       ],
       "opacity": 1,
@@ -18482,20 +18466,7 @@
       "draworder": "topdown",
       "id": 5,
       "name": "Boss",
-      "objects": [
-        {
-          "height": 164,
-          "id": 36,
-          "name": "lizard",
-          "opacity": 1,
-          "rotation": 0,
-          "type": "",
-          "visible": true,
-          "width": 160,
-          "x": 1768,
-          "y": 376
-        }
-      ],
+      "objects": [],
       "opacity": 1,
       "type": "objectgroup",
       "visible": true,
@@ -18794,7 +18765,7 @@
     }
   ],
   "nextlayerid": 8,
-  "nextobjectid": 38,
+  "nextobjectid": 36,
   "orientation": "orthogonal",
   "renderorder": "right-down",
   "tiledversion": "1.12.1",
@@ -18803,7 +18774,7 @@
     {
       "columns": 96,
       "firstgid": 1,
-      "image": "New_objs.png",
+      "image": "../../../../CrazyRogue/public/assets/map/New_objs.png",
       "imageheight": 2000,
       "imagewidth": 1536,
       "margin": 0,
