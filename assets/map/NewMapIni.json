@@ -320074,13 +320074,13 @@
         {
           "height": 54,
           "id": 138,
-          "name": "desert",
+          "name": "garden",
           "opacity": 1,
           "properties": [
             {
               "name": "targetMap",
               "type": "string",
-              "value": "room1"
+              "value": "garden"
             }
           ],
           "rotation": 0,
@@ -320125,7 +320125,7 @@
         {
           "height": 956.364,
           "id": 115,
-          "name": "lizard",
+          "name": "minotauro",
           "opacity": 1,
           "rotation": 0,
           "type": "",
@@ -320317,7 +320317,7 @@
         {
           "height": 868.364,
           "id": 131,
-          "name": "lizard",
+          "name": "lobisomem",
           "opacity": 1,
           "rotation": 0,
           "type": "",
